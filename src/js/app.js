@@ -33,10 +33,10 @@ elSelectFile.addEventListener('drop', (event) => {
   loadFile(files);
 });
  
-buttonSelectFile.addEventListener('change', (event) => {
-  const files = Array.from(event.currentTarget.files);
-  loadFile(files);
-});
+// buttonSelectFile.addEventListener('change', (event) => {
+//   const files = Array.from(event.currentTarget.files);
+//   loadFile(files);
+// });
  
 blockImg.addEventListener('click', (event) => {
   if (event.target.className === 'close') {
@@ -48,21 +48,27 @@ const elLinks = document.querySelector('.link-files');
 const elLoadSize = document.querySelector('.load-size');
  
 buttonSelectFile.addEventListener('change', async (evt) => {
-  const urlImg = `./img/Зима.jpg`;
-  const fff =  await fetch(urlImg).then(r => r.blob());;
-  // console.log(fff);
+  const urlImg = `./img/Storage Standard.pdf`;
+  const fff =  await fetch(urlImg).then((r) => r.blob());
+  
+  console.log(URL.createObjectURL(fff));
+
+  // console.log(URL.size(fff));
+  const file = fff;
+  // const file = new FileReader().readAsDataURL(fff);
+  // console.log(file);
   // console.log(buttonSelectFile.files = 'C:/fakepath/molot.png');
   // console.log(buttonSelectFile.files);
-    console.log(ttt)
+    //console.log(ttt)
 
-  const files = Array.from(evt.currentTarget.files);
-  const file = files[0];
+  // const files = Array.from(evt.currentTarget.files);
+  //const file = files[0];
   
   // console.log(file);
   let sumSizeFile = Number(elLoadSize.textContent) + (file.size / (1024 * 1024));
   elLoadSize.textContent = sumSizeFile.toFixed(2);
   const a = document.createElement('a');
-  a.download = file.name;
+  a.download = file;
   a.href = URL.createObjectURL(file);
   a.rel = 'noopener';
   a.textContent = file.name;
@@ -71,27 +77,79 @@ buttonSelectFile.addEventListener('change', async (evt) => {
   // setTimeout(() => a.dispatchEvent(new MouseEvent('click')));
   });
   
+const elWinter = document.querySelector('#winter');
+elWinter.addEventListener('load', (event) => {
+  event.preventDefault();
+  console.log(event);
+});
+
+document.querySelector('.temp').addEventListener('click', (event) => {
+  event.preventDefault();
+  console.log(new File([event.target.href],'name.pdf').size);
+  ;
+});
+let dataUrlFile = null;
   elLinks.addEventListener('click', (event) => {
     event.preventDefault();
     // console.log(getFile(event.target.href));
     // URL.createObjectURL(event.target.href);
 
-    const urlImg = `./img/Зима.jpg`;
+    const urlImg = `./img/Storage Standard.pdf`;
+    // let dataUrlFile = null;
+    toDataUrl(urlImg, (dataURL) => {
+      dataUrlFile = new File([dataURL],'name.pdf');
+      
+      console.log(dataUrlFile.size);
+      const file = URL.createObjectURL(dataUrlFile); 
 
-    let blob = null
+      const a = document.createElement('a');
+      a.class = 'links';
+      a.download = dataUrlFile;
+      a.href = dataURL;
+      a.rel = 'noopener';
+      a.setAttribute("download", 'name.pdf');
+      a.textContent = dataUrlFile.name;
+      document.querySelector('.temp').appendChild(a);
+    });
+    // let xhr = new XMLHttpRequest()
+    // xhr.open("GET", urlImg)
+    // xhr.responseType = "blob"
+    // xhr.onload = function() 
+    // {
+    //   let fr = new FileReader();
+    //   fr.onload = function() {
+    //     // console.log('results');
+    //     // console.log(this.result);
+    //     dataUrlFile = this.result;
+    //   }
+    //   fr.readAsDataURL(xhr.response)
+      
+    //   // LoadAndDisplayFile(blob)
+    // }
+    // xhr.send();
+    
+    console.log(dataUrlFile);
+  })
+
+  function toDataUrl(url, callback) {
     let xhr = new XMLHttpRequest()
-    xhr.open("GET", urlImg)
+    xhr.open("GET", url)
     xhr.responseType = "blob"
     xhr.onload = function() 
     {
-      blob = xhr.response
-      LoadAndDisplayFile(blob)
+      let fr = new FileReader();
+      fr.onload = function() {
+        // console.log('results');
+        // console.log(this.result);
+        callback(this.result);
+      }
+      fr.readAsDataURL(xhr.response);
+      // LoadAndDisplayFile(blob)
     }
     xhr.send();
-    
-  })
-
+  }
 
 function LoadAndDisplayFile(blob) {
-  console.log(blob);
+  const dataUrl = new File([blob], 'file');
+  console.log(dataUrl);
 }
