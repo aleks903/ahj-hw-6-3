@@ -20,7 +20,7 @@ module.exports = {
     }),
     new CopyPlugin([
       {
-        from: './src/img/', to: 'img/',
+        from: './src/files/', to: 'files/',
       }
     ]),
   ],
